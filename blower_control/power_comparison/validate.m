@@ -1,4 +1,4 @@
-open_system("ev_tms_v4.slx")
+open_system("ev_tms_blower.slx")
 
 obs_dims = [10 1];
 low_lim = ones(obs_dims) * -inf;

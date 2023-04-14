@@ -34,9 +34,9 @@ obsPath = [
 actPath = [
     featureInputLayer(actInfo.Dimension(1),Name="actInputLayer")
     fullyConnectedLayer(100)
-    tanhLayer
+    reluLayer
     fullyConnectedLayer(100)
-    tanhLayer
+    reluLayer
     fullyConnectedLayer(25, Name="actPathOutLayer")];
 
 % Common path
@@ -45,7 +45,8 @@ commonPath = [
     tanhLayer
     fullyConnectedLayer(25)
     tanhLayer
-    fullyConnectedLayer(1,Name="CriticOutput")];
+    fullyConnectedLayer(1,Name="CriticOutput")
+    tanhLayer];
 
 criticNetwork = layerGraph();
 criticNetwork = addLayers(criticNetwork,obsPath);

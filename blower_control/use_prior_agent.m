@@ -24,6 +24,7 @@ rng(0);
 x = load('/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower/Agent385.mat', 'saved_agent');
 agent = x.saved_agent;
 agent.AgentOptions.SaveExperienceBufferWithAgent = true;
+agent.AgentOptions.ResetExperienceBufferBeforeTraining = false;
 
 % agent.SampleTime = Ts;
 % 
