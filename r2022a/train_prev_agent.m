@@ -1,5 +1,5 @@
 open_system("ev_tms_blower.slx")
-%p = parpool(2);
+p = parpool(2);
 obs_dims = [10 1];
 low_lim = ones(obs_dims) * -inf;
 up_lim = ones(obs_dims) * inf;
@@ -21,14 +21,14 @@ Ts = 1;
 Tf = 600;
 rng(0);
 
-x = load('savedAgents/Agent8.mat', 'saved_agent');
+x = load('savedAgents/Agent95.mat', 'saved_agent');
 agent = x.saved_agent;
 agent.AgentOptions.SaveExperienceBufferWithAgent = true;
 agent.AgentOptions.ResetExperienceBufferBeforeTraining = false;
 
-agent.AgentOptions.NoiseOptions.StandardDeviation = 0.05;
+agent.AgentOptions.NoiseOptions.StandardDeviation = 0.1;
 agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-4;
-agent.AgentOptions.NoiseOptions.StandardDeviationMin = 0.01;
+agent.AgentOptions.NoiseOptions.StandardDeviationMin = 0.03;
 
 getAction(agent,{rand(obsInfo.Dimension)})
 
@@ -44,8 +44,8 @@ trainOpts = rlTrainingOptions(...
     StopTrainingCriteria="AverageReward",...
     StopTrainingValue=400);
 
-%trainOpts.UseParallel = true;
-%trainOpts.ParallelizationOptions.Mode = "async";
+trainOpts.UseParallel = true;
+trainOpts.ParallelizationOptions.Mode = "async";
 
 trainingStats = train(agent,env,trainOpts);
 

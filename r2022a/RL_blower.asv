@@ -100,7 +100,7 @@ agent = rlDDPGAgent(actor,critic);
 agent.SampleTime = Ts;
 
 agent.AgentOptions.InfoToSave.ExperienceBuffer = true;
-agent.AgentOptions.ResetExperienceBufferBeforeTraining = false;
+agent.A
 
 agent.AgentOptions.TargetSmoothFactor = 1e-3;
 agent.AgentOptions.DiscountFactor = 0.95; % was 1
