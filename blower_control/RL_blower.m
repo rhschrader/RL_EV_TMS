@@ -1,5 +1,5 @@
 open_system("ev_tms_blower.slx")
-p = parpool(4);
+p = parpool(2);
 obs_dims = [10 1];
 low_lim = ones(obs_dims) * -inf;
 up_lim = ones(obs_dims) * inf;
@@ -60,7 +60,7 @@ criticNetwork = connectLayers(criticNetwork, ...
 figure
 plot(criticNetwork)
 criticNetwork = dlnetwork(criticNetwork);
-summary(criticNetwork)
+%summary(criticNetwork)
 
 critic = rlQValueFunction(criticNetwork, ...
     obsInfo,actInfo, ...
@@ -87,7 +87,7 @@ actorNetwork = [
     ];
 
 actorNetwork = dlnetwork(actorNetwork);
-summary(actorNetwork)
+%summary(actorNetwork)
 
 actor = rlContinuousDeterministicActor(actorNetwork,obsInfo,actInfo);
 
@@ -99,14 +99,16 @@ agent = rlDDPGAgent(actor,critic);
 
 agent.SampleTime = Ts;
 
+agent.AgentOptions.InfoToSave.ExperienceBuffer = true;
+
 agent.AgentOptions.TargetSmoothFactor = 1e-3;
 agent.AgentOptions.DiscountFactor = 0.95; % was 1
 agent.AgentOptions.MiniBatchSize = 32;
 %agent.AgentOptions.ExperienceBufferLength = 1e6; 
 
-agent.AgentOptions.NoiseOptions.StandardDeviation = 0.095;
-agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-8;
-agent.AgentOptions.NoiseOptions.StandardDeviationMin = .02;
+agent.AgentOptions.NoiseOptions.StandardDeviation = 0.09;
+agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-4;
+agent.AgentOptions.NoiseOptions.StandardDeviationMin = .01;
 
 agent.AgentOptions.CriticOptimizerOptions.LearnRate = .0001;
 agent.AgentOptions.CriticOptimizerOptions.GradientThreshold = 1;
@@ -122,10 +124,10 @@ trainOpts = rlTrainingOptions(...
     Verbose=false, ...
     SaveAgentCriteria="EpisodeCount",...
     SaveAgentValue=1,...
-    SaveAgentDirectory="/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower",...
+    SaveAgentDirectory="savedAgents",...
     Plots="training-progress",...
     StopTrainingCriteria="AverageReward",...
-    StopTrainingValue=100);
+    StopTrainingValue=400);
 
 trainOpts.UseParallel = true;
 trainOpts.ParallelizationOptions.Mode = "async";
