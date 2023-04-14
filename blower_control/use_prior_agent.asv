@@ -21,7 +21,7 @@ Ts = 1;
 Tf = 600;
 rng(0);
 
-x = load('/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower/Agent385.mat', 'saved_agent');
+x = load('/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower/Agent212.mat', 'saved_agent');
 agent = x.saved_agent;
 agent.AgentOptions.SaveExperienceBufferWithAgent = true;
 
@@ -32,9 +32,8 @@ agent.AgentOptions.SaveExperienceBufferWithAgent = true;
 % agent.AgentOptions.MiniBatchSize = 32;
 % agent.AgentOptions.ExperienceBufferLength = 1e6; 
 % 
-agent.AgentOptions.NoiseOptions.StandardDeviation = 0.03;
-agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-5;
-agent.AgentOptions.NoiseOptions.StandardDeviationMin = 0.01;
+% agent.AgentOptions.NoiseOptions.Variance = 0.1;
+% agent.AgentOptions.NoiseOptions.VarianceDecayRate = 0;
 % %agent.AgentOptions.NoiseOptions.Mean = 0;
 % 
 % agent.AgentOptions.CriticOptimizerOptions.LearnRate = .0001;
@@ -51,11 +50,11 @@ trainOpts = rlTrainingOptions(...
     Verbose=false, ...
     SaveAgentCriteria="EpisodeCount",...
     SaveAgentValue=1,...
-    SaveAgentDirectory="/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower/385plus",...
+    SaveAgentDirectory="/Users/rossschrader/Desktop/ML/ME/_Project/savedAgents/blower/212plus",...
     UseParallel=true,...
     Plots="training-progress",...
     StopTrainingCriteria="AverageReward",...
-    StopTrainingValue=4000);
+    StopTrainingValue=6000);
 
 trainOpts.ParallelizationOptions.Mode = "async";
 
