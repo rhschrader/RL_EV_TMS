@@ -7,11 +7,14 @@
 
 %% Initial conditions
 
-t_ = [0 5 15 20 30 40];
+t_ = [0 5 15 20 25 30 40];
 x = randi(length(t_));
 T_env = t_(x);
-%T_env = 28;
-T_setpoint = 20;
+fprintf('\nT_env = %f', T_env);
+t_2 = [19 20 21 22];
+x2 = randi(length(t_2));
+T_setpoint = t_2(x2);
+fprintf('\nT_setpoint = %f\n', T_setpoint);
 if T_env > T_setpoint
     ac_onoff = 1;
 else
