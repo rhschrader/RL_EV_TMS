@@ -1,5 +1,5 @@
 open_system("ev_tms_blower.slx")
-p = parpool(2);
+%p = parpool(2);
 obs_dims = [10 1];
 low_lim = ones(obs_dims) * -inf;
 up_lim = ones(obs_dims) * inf;
@@ -88,6 +88,7 @@ actorNetwork = [
 
 actorNetwork = dlnetwork(actorNetwork);
 %summary(actorNetwork)
+%plot(actorNetwork)
 
 actor = rlContinuousDeterministicActor(actorNetwork,obsInfo,actInfo);
 
@@ -107,13 +108,13 @@ agent.AgentOptions.DiscountFactor = 0.95; % was 1
 agent.AgentOptions.MiniBatchSize = 32;
 %agent.AgentOptions.ExperienceBufferLength = 1e6; 
 
-agent.AgentOptions.NoiseOptions.StandardDeviation = 0.15;
-agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-5;
+agent.AgentOptions.NoiseOptions.StandardDeviation = 0.2;
+agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-4;
 agent.AgentOptions.NoiseOptions.StandardDeviationMin = .03;
 
-agent.AgentOptions.CriticOptimizerOptions.LearnRate = .0001;
+agent.AgentOptions.CriticOptimizerOptions.LearnRate = .001;
 agent.AgentOptions.CriticOptimizerOptions.GradientThreshold = 1;
-agent.AgentOptions.ActorOptimizerOptions.LearnRate = .0001; %was 1e-4
+agent.AgentOptions.ActorOptimizerOptions.LearnRate = .001; %was 1e-4
 agent.AgentOptions.ActorOptimizerOptions.GradientThreshold = 1;
 
 getAction(agent,{rand(obsInfo.Dimension)})
@@ -130,11 +131,11 @@ trainOpts = rlTrainingOptions(...
     StopTrainingCriteria="AverageReward",...
     StopTrainingValue=400);
 
-trainOpts.UseParallel = true;
-trainOpts.ParallelizationOptions.Mode = "async";
-%%% To delete: myCluster = parcluster('Processes'), delete(myCluster.Jobs)
+%trainOpts.UseParallel = true;
+%trainOpts.ParallelizationOptions.Mode = "async";
+%%% To delete: myCluster = parcluster('Processes'); delete(myCluster.Jobs)
 
-trainingStats = train(agent,env,trainOpts);
+%trainingStats = train(agent,env,trainOpts);
 
 function in = localResetFcn(in)
 run("ev_tms_blower_params.m");

@@ -1,6 +1,6 @@
 open_system("ev_tms_blower.slx")
 p = parpool(2);
-obs_dims = [10 1];
+obs_dims = [11 1];
 low_lim = ones(obs_dims) * -inf;
 up_lim = ones(obs_dims) * inf;
 
@@ -28,16 +28,16 @@ obsPath = [
     reluLayer
     fullyConnectedLayer(100)
     reluLayer
-    fullyConnectedLayer(25, Name="obsPathOutLayer")];
+    fullyConnectedLayer(50, Name="obsPathOutLayer")];
 
 % Action path
 actPath = [
     featureInputLayer(actInfo.Dimension(1),Name="actInputLayer")
     fullyConnectedLayer(100)
-    tanhLayer
+    reluLayer
     fullyConnectedLayer(100)
-    tanhLayer
-    fullyConnectedLayer(25, Name="actPathOutLayer")];
+    reluLayer
+    fullyConnectedLayer(50, Name="actPathOutLayer")];
 
 % Common path
 commonPath = [
@@ -88,6 +88,7 @@ actorNetwork = [
 
 actorNetwork = dlnetwork(actorNetwork);
 %summary(actorNetwork)
+%plot(actorNetwork)
 
 actor = rlContinuousDeterministicActor(actorNetwork,obsInfo,actInfo);
 
@@ -100,20 +101,20 @@ agent = rlDDPGAgent(actor,critic);
 agent.SampleTime = Ts;
 
 agent.AgentOptions.InfoToSave.ExperienceBuffer = true;
-agent.A
+agent.AgentOptions.ResetExperienceBufferBeforeTraining = false;
 
 agent.AgentOptions.TargetSmoothFactor = 1e-3;
 agent.AgentOptions.DiscountFactor = 0.95; % was 1
 agent.AgentOptions.MiniBatchSize = 32;
 %agent.AgentOptions.ExperienceBufferLength = 1e6; 
 
-agent.AgentOptions.NoiseOptions.StandardDeviation = 0.15;
-agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-5;
+agent.AgentOptions.NoiseOptions.StandardDeviation = 0.2;
+agent.AgentOptions.NoiseOptions.StandardDeviationDecayRate = 1e-4;
 agent.AgentOptions.NoiseOptions.StandardDeviationMin = .03;
 
-agent.AgentOptions.CriticOptimizerOptions.LearnRate = .0001;
+agent.AgentOptions.CriticOptimizerOptions.LearnRate = .001;
 agent.AgentOptions.CriticOptimizerOptions.GradientThreshold = 1;
-agent.AgentOptions.ActorOptimizerOptions.LearnRate = .0001; %was 1e-4
+agent.AgentOptions.ActorOptimizerOptions.LearnRate = .001; %was 1e-4
 agent.AgentOptions.ActorOptimizerOptions.GradientThreshold = 1;
 
 getAction(agent,{rand(obsInfo.Dimension)})
@@ -130,11 +131,11 @@ trainOpts = rlTrainingOptions(...
     StopTrainingCriteria="AverageReward",...
     StopTrainingValue=400);
 
-trainOpts.UseParallel = true;
-trainOpts.ParallelizationOptions.Mode = "async";
-%%% To delete: myCluster = parcluster('Processes'), delete(myCluster.Jobs)
+%trainOpts.UseParallel = true;
+%trainOpts.ParallelizationOptions.Mode = "async";
+%%% To delete: myCluster = parcluster('Processes'); delete(myCluster.Jobs)
 
-trainingStats = train(agent,env,trainOpts);
+%trainingStats = train(agent,env,trainOpts);
 
 function in = localResetFcn(in)
 run("ev_tms_blower_params.m");
